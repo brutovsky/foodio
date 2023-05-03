@@ -1,15 +1,15 @@
 version: "3.8"
 
 services:
-  publication-service-database:
-    image: mongo:5.0
-    container_name: publication-service-database
-    expose:
-      - 27017
-    ports:
-      - "27017:27017"
-    volumes:
-      - publication-service-volume:/var/lib/mongodb
+#  publication-service-database:
+#    image: mongo:5.0
+#    container_name: publication-service-database
+#    expose:
+#      - 27017
+#    ports:
+#      - "27017:27017"
+#    volumes:
+#      - publication-service-volume:/var/lib/mongodb
 
   keycloak-auth-service-database:
     container_name: keycloak-auth-service-database
