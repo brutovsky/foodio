@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  publication-service-database:
+    image: mongo:5.0
+    container_name: publication-service-database
+    expose:
+      - 27017
+    ports:
+      - "27017:27017"
+    volumes:
+      - publication-service-volume:/var/lib/mongodb
+
+  keycloak-auth-service-database:
+    container_name: keycloak-auth-service-database
+    image: library/postgres:alpine3.15
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: keycloak_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - publication-service-volume:/var/lib/postgresql
+    restart: unless-stopped
+
+  keycloak-auth-service:
+    image: jboss/keycloak:16.0.0
+    container_name: keycloak-auth-service
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: keycloak-auth-service-database
+      DB_DATABASE: keycloak_db
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin_password
+      KEYCLOAK_IMPORT: /opt/jboss/keycloak/imports/realm-export.json
+    volumes:
+      - ./keycloak/realm-export.json:/opt/jboss/keycloak/imports/realm-export.json
+      - ./keycloak/profile.properties:/opt/jboss/keycloak/standalone/configuration/profile.properties
+      - publication-service-volume:/var/lib/keycloak
+    ports:
+      - "8484:8080"
+    depends_on:
+      - keycloak-auth-service-database
+
+volumes:
+  publication-service-volume:

@@ -1,0 +1,41 @@
+#https://www.mongodb.com/docs/manual/tutorial/sharding-segmenting-data-by-location/
+
+sh.enableSharding("publication")
+sh.shardCollection("publication.publications", {"city": 1, "userEmail": 1})
+
+#db.publications.createIndex({ "city": 1, "userEmail": 1 })
+
+sh.disableBalancing("publication.publications")
+sh.addShardTag("shard1rs", "West")
+sh.addShardTag("shard2rs", "Central")
+
+sh.addTagRange(
+  "publication.publications",
+  { "city" : "Lviv", "userEmail" : MinKey },
+  { "city" : "Lviv", "userEmail" : MaxKey },
+  "West"
+)
+
+sh.addTagRange(
+  "publication.publications",
+  { "city" : "Kyiv", "userEmail" : MinKey },
+  { "city" : "Kyiv", "userEmail" : MaxKey },
+  "Central"
+)
+
+sh.enableBalancing("publication.publications")
+
+use publication
+
+db.publications.insertMany([
+  { city: "Kyiv", userEmail: "test1@gmail.com", title: "title1" },
+  { city: "Kyiv", userEmail: "test1@gmail.com", title: "title2" },
+  { city: "Lviv", userEmail: "test2@gmail.com", title: "title3" },
+  { city: "Lviv", userEmail: "test2@gmail.com", title: "title4" },
+])
+
+db.publications.getShardDistribution()
+
+db.publications.find()
+db.publications.find().explain()
+
