@@ -1,5 +1,6 @@
 package com.brtvsk.entity;
 
+import com.brtvsk.entity.enums.PublicationStatus;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,13 +18,13 @@ import java.util.UUID;
 @AllArgsConstructor
 @MongoEntity(database = "publication", collection = "publications")
 public class PublicationEntity {
-    public ObjectId id; // used by MongoDB for the _id field
-    public String city;
-    public String title;
-    public String description;
-    public UUID userUUID;
-    public String userEmail;
-    public String status;
-    public LocalDateTime createdDate;
-    public LocalDateTime updatedDate;
+    private ObjectId id; // used by MongoDB for the _id field
+    private String city;
+    private String title;
+    private String description;
+    private UUID userUUID;
+    private String userEmail;
+    private PublicationStatus status;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
 }

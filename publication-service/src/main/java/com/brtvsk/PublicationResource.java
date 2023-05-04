@@ -1,6 +1,9 @@
 package com.brtvsk;
 
+import com.brtvsk.dto.PublicationCreateRequestDto;
 import com.brtvsk.dto.PublicationDto;
+import com.brtvsk.dto.PublicationUpdateRequestDto;
+import com.brtvsk.model.UserInfo;
 import com.brtvsk.service.PublicationService;
 import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
@@ -36,8 +39,11 @@ public class PublicationResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Uni<PublicationDto> addPublication(final PublicationDto publicationDto) {
-        return publicationService.addPublication(publicationDto);
+    public Uni<PublicationDto> addPublication(final PublicationCreateRequestDto publicationDto) {
+        log.info(publicationDto.toString());
+        return publicationService.addPublication(publicationDto, UserInfo
+                .builder().build()
+        );
     }
 
     @Blocking
@@ -45,7 +51,8 @@ public class PublicationResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Uni<PublicationDto> updatePublication(final @PathParam("id") ObjectId id, final PublicationDto publicationDto) {
+    public PublicationDto updatePublication(final @PathParam("id") ObjectId id,
+            final PublicationUpdateRequestDto publicationDto) {
         return publicationService.updatePublication(id, publicationDto);
     }
 

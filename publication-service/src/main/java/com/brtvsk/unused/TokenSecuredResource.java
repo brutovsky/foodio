@@ -1,4 +1,4 @@
-package com.brtvsk;
+package com.brtvsk.unused;
 
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.annotation.security.PermitAll;

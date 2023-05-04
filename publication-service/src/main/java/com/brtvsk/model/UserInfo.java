@@ -7,15 +7,17 @@ import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInfo {
-    private ObjectId uuid;
+    private UUID uuid;
     private String firstName;
     private String lastName;
     private String email;
+    private String city;
     private LocalDate birth;
 }

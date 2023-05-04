@@ -1,4 +1,4 @@
-package com.brtvsk;
+package com.brtvsk.unused;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

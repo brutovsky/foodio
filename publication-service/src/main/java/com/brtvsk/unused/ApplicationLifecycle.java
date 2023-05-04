@@ -1,4 +1,4 @@
-package com.brtvsk;
+package com.brtvsk.unused;
 
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;

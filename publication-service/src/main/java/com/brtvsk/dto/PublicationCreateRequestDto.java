@@ -5,22 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
+import org.bson.types.ObjectId;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PublicationDto {
-    public String id;
-    public UUID userUUID;
+public class PublicationCreateRequestDto {
+    public ObjectId id;
     public String city;
     public String title;
     public String description;
-    public String userEmail;
     public PublicationStatus status;
-    public LocalDateTime createdDate;
-    public LocalDateTime updatedDate;
 }

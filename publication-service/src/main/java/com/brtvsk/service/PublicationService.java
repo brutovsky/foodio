@@ -1,7 +1,10 @@
 package com.brtvsk.service;
 
 import com.brtvsk.dto.PublicationDto;
+import com.brtvsk.dto.PublicationCreateRequestDto;
+import com.brtvsk.dto.PublicationUpdateRequestDto;
 import com.brtvsk.entity.PublicationEntity;
+import com.brtvsk.model.UserInfo;
 import com.brtvsk.repo.PublicationRepo;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -17,6 +20,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @ApplicationScoped
 public class PublicationService {
+
     private final PublicationRepo publicationRepo;
 
     public Uni<List<PublicationDto>> getAll() {
@@ -47,13 +51,13 @@ public class PublicationService {
                 .toList());
     }
 
-    public Uni<PublicationDto> addPublication(final PublicationDto publicationDto) {
+    public Uni<PublicationDto> addPublication(final PublicationCreateRequestDto publicationDto, final UserInfo userInfo) {
         final PublicationEntity publicationToAdd = PublicationEntity.builder()
                 .city(publicationDto.getCity())
                 .title(publicationDto.getTitle())
-                .status("CREATED")
-                .userUUID(publicationDto.getUserUUID())
-                .userEmail(publicationDto.getUserEmail())
+                .status(publicationDto.getStatus())
+                .userUUID(userInfo.getUuid())
+                .userEmail(userInfo.getEmail())
                 .description(publicationDto.getDescription())
                 .createdDate(LocalDateTime.now())
                 .updatedDate(LocalDateTime.now())
@@ -62,20 +66,20 @@ public class PublicationService {
     }
 
     @Transactional
-    public Uni<PublicationDto> updatePublication(final ObjectId bsonId, final PublicationDto publicationDto) {
+    public PublicationDto updatePublication(final ObjectId bsonId, final PublicationUpdateRequestDto publicationDto) {
         return publicationRepo.findByIdOptional(bsonId).chain(optPub -> {
             if (optPub.isPresent()) {
                 final PublicationEntity pub = optPub.get();
                 Optional.ofNullable(publicationDto.getCity()).ifPresent(pub::setCity);
                 Optional.ofNullable(publicationDto.getTitle()).ifPresent(pub::setTitle);
                 Optional.ofNullable(publicationDto.getDescription()).ifPresent(pub::setDescription);
-                return publicationRepo.persistOrUpdate(pub);
+                return publicationRepo.update(pub);
             } else {
                 return Uni.createFrom()
                         .failure(() -> new NoSuchElementException(
                                 String.format("Not Found entity by id: {%s}", bsonId)));
             }
-        }).map(this::mapPublication);
+        }).map(this::mapPublication).await().indefinitely();
     }
 
     private PublicationDto mapPublication(final PublicationEntity publicationEntity) {
